@@ -48,6 +48,9 @@ func mysqlConnect(w http.ResponseWriter, r *http.Request) {
 		Net:     "tcp",
 		Addr:    addr,
 		Timeout: time.Second * 10,
+
+		// https://stackoverflow.com/a/71296452/3231778
+		AllowNativePasswords: true,
 	}
 
 	db, err = sql.Open("mysql", dsn.FormatDSN())
