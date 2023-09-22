@@ -1,11 +1,16 @@
+locals {
+  master_username = "aurora"
+  master_password = "p4ssw0rd"
+}
+
 resource "aws_rds_cluster" "default" {
   cluster_identifier     = "aurora-cluster-1"
   engine                 = "aurora-mysql"
   engine_version         = "8.0.mysql_aurora.3.04.0"
   availability_zones     = var.azs
   database_name          = "database1"
-  master_username        = "aurora"
-  master_password        = "p4ssw0rd"
+  master_username        = local.master_username
+  master_password        = local.master_password
   skip_final_snapshot    = true
   db_subnet_group_name   = aws_db_subnet_group.default.name
   vpc_security_group_ids = [aws_security_group.allow_postgresql.id]

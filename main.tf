@@ -58,3 +58,11 @@ module "ecs" {
   task_cpu                    = var.ecs_task_cpu
   task_memory                 = var.ecs_task_memory
 }
+
+module "ssm" {
+  source          = "./modules/ssm"
+  workload        = local.workload
+  aurora_username = module.rds.master_username
+  aurora_password = module.rds.master_password
+  aurora_endpoint = module.rds.endpoint
+}
