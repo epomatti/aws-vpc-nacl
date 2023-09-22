@@ -11,9 +11,9 @@ func main() {
 	port := utils.GetPort()
 
 	http.HandleFunc("/", ok)
+	http.HandleFunc("/health", ok)
 	http.HandleFunc("/mysql", mysql)
 
-	// Start the HTTP server
 	addr := fmt.Sprintf(":%d", port)
 	log.Printf("String server on port %v", port)
 	http.ListenAndServe(addr, nil)
