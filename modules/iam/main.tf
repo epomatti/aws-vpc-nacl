@@ -59,13 +59,14 @@ resource "aws_iam_role" "ecs_task" {
 }
 
 
-resource "aws_iam_policy" "cw_logs" {
+resource "aws_iam_policy" "ecs_tasks" {
   name = "ECSFargateTaskCloudWatchPolicy-${var.workload}"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "Logs"
         Effect = "Allow"
         Action = [
           "logs:CreateLogGroup",
@@ -76,12 +77,22 @@ resource "aws_iam_policy" "cw_logs" {
         Resource = [
           "arn:aws:logs:${local.aws_region}:${local.aws_account_id}:*"
         ]
+      },
+      {
+        Sid    = "SSM"
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameters",
+        ]
+        Resource = [
+          "arn:aws:ssm:${local.aws_region}:${local.aws_account_id}:*"
+        ]
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy_attachment" "cw_logs" {
+resource "aws_iam_role_policy_attachment" "ecs_tasks" {
   role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.cw_logs.arn
+  policy_arn = aws_iam_policy.ecs_tasks.arn
 }
