@@ -144,3 +144,13 @@ resource "aws_security_group_rule" "egress_https" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.all.id
 }
+
+resource "aws_security_group_rule" "egress_aurora" {
+  description       = "Allows Aurora Mysql egress"
+  type              = "egress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
+  security_group_id = aws_security_group.all.id
+}
