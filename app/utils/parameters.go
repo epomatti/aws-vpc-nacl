@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -24,7 +25,7 @@ type Parameters struct {
 	AuroraEndpoint string
 }
 
-func GetParameters() Parameters {
+func GetParameters() (Parameters, error) {
 	ssmUsernameKey := fmt.Sprintf("%s/username", prefix)
 	ssmPasswordKey := fmt.Sprintf("%s/password", prefix)
 	ssmEndpointKey := fmt.Sprintf("%s/endpoint", prefix)
@@ -41,7 +42,9 @@ func GetParameters() Parameters {
 		WithDecryption: &withDecryption,
 	}
 	o, err := client.GetParameters(context.TODO(), input)
-	Check(err)
+	if err != nil {
+		return Parameters{}, err
+	}
 
 	params := Parameters{}
 
@@ -55,9 +58,9 @@ func GetParameters() Parameters {
 			params.AuroraEndpoint = *p.Value
 		default:
 			msg := fmt.Sprintf("Switch failed %s", *p.Name)
-			panic(msg)
+			return Parameters{}, errors.New(msg)
 		}
 	}
 
-	return params
+	return params, nil
 }

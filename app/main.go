@@ -6,6 +6,7 @@ import (
 	"log"
 	"main/utils"
 	"net/http"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -29,7 +30,12 @@ func ok(w http.ResponseWriter, r *http.Request) {
 // MySQL
 
 func mysqlConnect(w http.ResponseWriter, r *http.Request) {
-	params := utils.GetParameters()
+	params, err := utils.GetParameters()
+	if err != nil {
+		log.Println(err)
+		fmt.Fprint(w, "ERROR!\n")
+		return
+	}
 
 	addr := fmt.Sprintf("%s:3306", params.AuroraEndpoint)
 	log.Printf("Connecting to MySql at %s", addr)
@@ -37,22 +43,25 @@ func mysqlConnect(w http.ResponseWriter, r *http.Request) {
 	var db *sql.DB
 
 	var dsn = mysql.Config{
-		User:   params.AuroraUsername,
-		Passwd: params.AuroraPassword,
-		Net:    "tcp",
-		Addr:   addr,
-		// DBName: "sakila",
+		User:    params.AuroraUsername,
+		Passwd:  params.AuroraPassword,
+		Net:     "tcp",
+		Addr:    addr,
+		Timeout: time.Second * 10,
 	}
 
-	var err error
 	db, err = sql.Open("mysql", dsn.FormatDSN())
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		fmt.Fprint(w, "ERROR!\n")
+		return
 	}
 
-	pingErr := db.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
+	err = db.Ping()
+	if err != nil {
+		log.Println(err)
+		fmt.Fprint(w, "ERROR!\n")
+		return
 	}
 
 	log.Println("Connected!")
