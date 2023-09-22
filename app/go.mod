@@ -5,6 +5,7 @@ go 1.21.1
 require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.42
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
+	github.com/go-sql-driver/mysql v1.7.1
 )
 
 require (
