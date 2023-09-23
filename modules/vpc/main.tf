@@ -79,3 +79,7 @@ resource "aws_default_route_table" "internet" {
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.main.id
 }
+
+resource "aws_default_network_acl" "default" {
+  default_network_acl_id = aws_vpc.main.default_network_acl_id
+}

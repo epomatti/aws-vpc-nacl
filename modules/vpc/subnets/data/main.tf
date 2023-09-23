@@ -72,3 +72,58 @@ resource "aws_route_table_association" "data3" {
   subnet_id      = aws_subnet.data3.id
   route_table_id = aws_route_table.data3.id
 }
+
+### NACLs ###
+
+# https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-security-groups.html#elb-vpc-nacl
+# https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html#nacl-other-services
+
+data "aws_vpc" "selected" {
+  id = var.vpc_id
+}
+
+locals {
+  vpc_cidr_block = data.aws_vpc.selected.cidr_block
+}
+
+resource "aws_network_acl" "main" {
+  vpc_id = var.vpc_id
+
+  # Allows inbound HTTP traffic from any IPv4 address.
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = local.vpc_cidr_block
+    from_port  = 3306
+    to_port    = 3306
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = local.vpc_cidr_block
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+  tags = {
+    Name = "nacl-${var.workload}-aurora"
+  }
+}
+
+resource "aws_network_acl_association" "subnet_data1" {
+  network_acl_id = aws_network_acl.main.id
+  subnet_id      = aws_subnet.data1.id
+}
+
+resource "aws_network_acl_association" "subnet_data2" {
+  network_acl_id = aws_network_acl.main.id
+  subnet_id      = aws_subnet.data2.id
+}
+
+resource "aws_network_acl_association" "subnet_data3" {
+  network_acl_id = aws_network_acl.main.id
+  subnet_id      = aws_subnet.data3.id
+}
