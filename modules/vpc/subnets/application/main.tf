@@ -122,15 +122,6 @@ resource "aws_network_acl" "main" {
     to_port    = 80
   }
 
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 101
-    action     = "allow"
-    cidr_block = local.vpc_cidr_block # Source
-    from_port  = 443
-    to_port    = 443
-  }
-
   egress {
     protocol   = "tcp"
     rule_no    = 100
@@ -174,7 +165,7 @@ resource "aws_network_acl" "main" {
     rule_no    = 110
     action     = "allow"
     cidr_block = local.vpc_cidr_block # Target
-    from_port  = 32768
+    from_port  = 1024
     to_port    = 65535
   }
 
