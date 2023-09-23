@@ -140,6 +140,24 @@ resource "aws_network_acl" "main" {
     to_port    = 3306
   }
 
+  egress {
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = "0.0.0.0/0" # Target
+    from_port  = 80
+    to_port    = 80
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 102
+    action     = "allow"
+    cidr_block = "0.0.0.0/0" # Target
+    from_port  = 443
+    to_port    = 443
+  }
+
   # Allows inbound return IPv4 traffic from the internet (that is, for requests that originate in the subnet).
   # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
   ingress {
