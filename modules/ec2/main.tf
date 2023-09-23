@@ -1,5 +1,5 @@
 locals {
-  name = "jumpserver-${var.workload}"
+  name = "jb-${var.workload}"
 }
 
 data "aws_subnet" "selected" {
@@ -88,13 +88,22 @@ resource "aws_security_group" "jumpserver" {
   }
 }
 
-resource "aws_security_group_rule" "egress_internet" {
+resource "aws_security_group_rule" "egress_internet_http" {
   description       = "Allow connection to get packages, as well as to connect to the private subnet"
   type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"] #tfsec:ignore:aws-ec2-no-public-egress-sgr
-  ipv6_cidr_blocks  = []
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.jumpserver.id
+}
+
+resource "aws_security_group_rule" "egress_internet_https" {
+  description       = "Allow connection to get packages, as well as to connect to the private subnet"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.jumpserver.id
 }

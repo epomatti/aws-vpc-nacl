@@ -81,13 +81,6 @@ module "balancer_subnets" {
   az3 = local.az3
 }
 
-module "jumpserver" {
-  source   = "./jumpserver"
-  workload = var.workload
-  subnet   = module.application_subnets.subnets[0]
-  vpc_id   = aws_vpc.main.id
-}
-
 # Clear all default entries (CKV2_AWS_12)
 resource "aws_default_route_table" "internet" {
   default_route_table_id = aws_vpc.main.default_route_table_id

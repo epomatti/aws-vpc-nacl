@@ -66,3 +66,10 @@ module "ssm" {
   aurora_password = module.rds.master_password
   aurora_endpoint = module.rds.endpoint
 }
+
+module "ec2" {
+  source   = "./modules/ec2"
+  workload = local.workload
+  subnet   = module.vpc.application_subnets[0]
+  vpc_id   = module.vpc.vpc_id
+}
