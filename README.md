@@ -13,10 +13,9 @@ terraform init
 terraform apply -auto-approve
 ```
 
-Once created, deploy the application:
+Once created, deploy the application from the `app` directory:
 
 ```sh
-# from the app dir
 bash ecrBuildPush.sh
 ```
 
