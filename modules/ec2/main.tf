@@ -15,8 +15,7 @@ resource "aws_instance" "jumpserver" {
   ami           = "ami-08fdd91d87f63bb09"
   instance_type = "t4g.nano"
 
-  #checkov:skip=CKV_AWS_88:VPN is too expensive. VM will be shutted down
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   subnet_id                   = var.subnet
   vpc_security_group_ids      = [aws_security_group.jumpserver.id]
 
@@ -38,14 +37,6 @@ resource "aws_instance" "jumpserver" {
 
   root_block_device {
     encrypted = true
-  }
-
-  lifecycle {
-    // TODO: Check this
-    ignore_changes = [
-      ami,
-      associate_public_ip_address
-    ]
   }
 
   tags = {
