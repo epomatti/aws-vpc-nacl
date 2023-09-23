@@ -42,11 +42,28 @@ module "data_subnets" {
   az3 = local.az3
 }
 
-module "application_subnets" {
-  source              = "./subnets/application"
+module "nat_subnets" {
+  source              = "./subnets/nat"
   vpc_id              = aws_vpc.main.id
   interget_gateway_id = aws_internet_gateway.main.id
   workload            = var.workload
+
+  az1 = local.az1
+  az2 = local.az2
+  az3 = local.az3
+}
+
+module "nat_gateways" {
+  source   = "./nat"
+  workload = var.workload
+  subnets  = module.nat_subnets.subnets
+}
+
+module "application_subnets" {
+  source          = "./subnets/application"
+  vpc_id          = aws_vpc.main.id
+  workload        = var.workload
+  nat_gateway_ids = module.nat_gateways.nat_gateway_ids
 
   az1 = local.az1
   az2 = local.az2

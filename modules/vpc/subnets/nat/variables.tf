@@ -2,6 +2,10 @@ variable "vpc_id" {
   type = string
 }
 
+variable "interget_gateway_id" {
+  type = string
+}
+
 variable "workload" {
   type = string
 }
@@ -16,8 +20,4 @@ variable "az2" {
 
 variable "az3" {
   type = string
-}
-
-variable "nat_gateway_ids" {
-  type = list(string)
 }
