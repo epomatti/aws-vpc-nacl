@@ -164,7 +164,7 @@ resource "aws_network_acl" "main" {
     protocol   = "tcp"
     rule_no    = 110
     action     = "allow"
-    cidr_block = local.vpc_cidr_block # Source
+    cidr_block = "0.0.0.0/0" # Source
     from_port  = 1024
     to_port    = 65535
   }
