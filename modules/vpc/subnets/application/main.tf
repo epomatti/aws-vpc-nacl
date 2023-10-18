@@ -112,7 +112,8 @@ locals {
 resource "aws_network_acl" "main" {
   vpc_id = var.vpc_id
 
-  # Allows inbound HTTP traffic from any IPv4 address.
+  ### Ingress ###
+
   ingress {
     protocol   = "tcp"
     rule_no    = 100
@@ -122,14 +123,28 @@ resource "aws_network_acl" "main" {
     to_port    = 80
   }
 
-  egress {
+  ingress {
     protocol   = "tcp"
-    rule_no    = 100
+    rule_no    = 105
     action     = "allow"
-    cidr_block = local.vpc_cidr_block # Target
-    from_port  = 3306
-    to_port    = 3306
+    cidr_block = local.vpc_cidr_block # Source
+    from_port  = 443
+    to_port    = 443
   }
+
+  # Allows inbound return IPv4 traffic from the internet (that is, for requests that originate in the subnet).
+  # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 110
+    action     = "allow"
+    cidr_block = "0.0.0.0/0" # Source
+    from_port  = 1024
+    to_port    = 65535
+  }
+
+
+  ### Egress ###
 
   egress {
     protocol   = "tcp"
@@ -149,17 +164,7 @@ resource "aws_network_acl" "main" {
     to_port    = 443
   }
 
-  # Allows inbound return IPv4 traffic from the internet (that is, for requests that originate in the subnet).
-  # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 110
-    action     = "allow"
-    cidr_block = "0.0.0.0/0" # Source
-    from_port  = 1024
-    to_port    = 65535
-  }
-
+  # Inclues RDS MySQL 3306
   egress {
     protocol   = "tcp"
     rule_no    = 110
