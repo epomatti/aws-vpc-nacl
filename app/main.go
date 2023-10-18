@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"main/utils"
 	"net/http"
@@ -16,6 +17,7 @@ func main() {
 
 	http.HandleFunc("/", ok)
 	http.HandleFunc("/health", ok)
+	http.HandleFunc("/internet", internet)
 	http.HandleFunc("/mysql", mysqlConnect)
 
 	addr := fmt.Sprintf(":%d", port)
@@ -27,7 +29,26 @@ func ok(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "OK\n")
 }
 
-// MySQL
+func internet(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://jsonplaceholder.typicode.com/posts/1")
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err)
+		return
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err)
+		return
+	}
+
+	response := string(body)
+	fmt.Fprintln(w, response)
+}
 
 func mysqlConnect(w http.ResponseWriter, r *http.Request) {
 	params, err := utils.GetParameters()
