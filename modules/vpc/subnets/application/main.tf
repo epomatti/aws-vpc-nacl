@@ -134,6 +134,9 @@ resource "aws_network_acl" "main" {
 
   # Allows inbound return IPv4 traffic from the internet (that is, for requests that originate in the subnet).
   # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
+  #
+  # Usinhg the VPC CIDR will not work. It has to be 0.0.0.0/0.
+
   ingress {
     protocol   = "tcp"
     rule_no    = 110
